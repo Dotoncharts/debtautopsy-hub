@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trap Calculator — Debt Autopsy</title>
+<meta name="description" content="Pay only the minimum and the bank throws you a funeral. Enter your balance, APR and minimum payment — Mort does the autopsy math.">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <img src="assets/mort.png" alt="Mort, the Debt Autopsy coroner">
+      <span class="name">Debt <em>Autopsy</em></span>
+    </a>
+    <nav class="main" aria-label="Main">
+      <a href="index.html">Home</a>
+      <a href="cases.html">Case Files</a>
+      <a href="calculator.html" aria-current="page">Trap Calculator</a>
+      <a href="evidence.html">Evidence Locker</a>
+      <a href="mailbag.html">Mailbag</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <h2 class="section">The Minimum-Payment <span class="red">Trap Calculator</span></h2>
+  <p class="body">The minimum payment isn't a payment plan. It's a subscription — to your own debt.
+  Enter your numbers below and Mort will tell you exactly what the bank is charging you for the funeral.</p>
+
+  <form class="calc" id="trap-form" novalidate>
+    <label for="balance">Card balance ($)</label>
+    <input type="number" id="balance" min="1" step="any" value="29000" required>
+
+    <label for="apr">APR (% per year)</label>
+    <input type="number" id="apr" min="0" step="any" value="20.99" required>
+
+    <label>Minimum payment is…</label>
+    <div class="radio-row" role="radiogroup" aria-label="Minimum payment type">
+      <label><input type="radio" name="minmode" value="pct" checked> % of balance</label>
+      <label><input type="radio" name="minmode" value="fixed"> Fixed $ / month</label>
+    </div>
+
+    <label for="minval" id="minval-label">Minimum payment (% of balance, per month)</label>
+    <input type="number" id="minval" min="0" step="any" value="2.76" required>
+
+    <button class="run" type="submit">Perform the autopsy</button>
+
+    <div class="results" id="results" aria-live="polite">
+      <div class="grid">
+        <div class="stat"><div class="num" id="r-months">—</div><div class="lbl">Months of minimums</div></div>
+        <div class="stat"><div class="num" id="r-years">—</div><div class="lbl">Years in the trap</div></div>
+        <div class="stat"><div class="num red" id="r-total">—</div><div class="lbl">Total you'd pay</div></div>
+        <div class="stat"><div class="num red" id="r-interest">—</div><div class="lbl">Interest — the funeral bill</div></div>
+      </div>
+      <p class="mort-verdict"><span class="who">Mort's verdict</span><span id="r-verdict"></span></p>
+    </div>
+  </form>
+
+  <p class="fineprint">How it works: each month, interest is charged on the balance (APR ÷ 12),
+  then your minimum payment comes off. In % mode the minimum is recalculated on the shrinking balance
+  every month, with the standard $25 minimum floor most cards apply — which is exactly why it takes
+  so long. This is an estimate for education, not financial advice. Your statement's actual minimum
+  formula may differ — which is itself an autopsy finding.</p>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <span>© 2026 Debt Autopsy. All rights reserved.</span>
+    <span>No face. No hype. Just autopsies.</span>
+    <span><a href="mailbag.html">hellodebtautopsy@gmail.com</a></span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var modeInputs = document.querySelectorAll('input[name="minmode"]');
+  var minLabel = document.getElementById('minval-label');
+  var minVal = document.getElementById('minval');
+
+  function currentMode() {
+    for (var i = 0; i < modeInputs.length; i++) if (modeInputs[i].checked) return modeInputs[i].value;
+    return 'pct';
+  }
+  function syncLabel() {
+    if (currentMode() === 'pct') {
+      minLabel.textContent = 'Minimum payment (% of balance, per month)';
+      if (minVal.value === '800') minVal.value = '2.76';
+    } else {
+      minLabel.textContent = 'Minimum payment ($ per month)';
+      if (minVal.value === '2.76') minVal.value = '800';
+    }
+  }
+  for (var i = 0; i < modeInputs.length; i++) modeInputs[i].addEventListener('change', syncLabel);
+
+  function money(n) {
+    return '$' + n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  }
+
+  document.getElementById('trap-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var balance = parseFloat(document.getElementById('balance').value);
+    var apr = parseFloat(document.getElementById('apr').value);
+    var mv = parseFloat(minVal.value);
+    var mode = currentMode();
+    var results = document.getElementById('results');
+
+    if (!(balance > 0) || !(apr >= 0) || !(mv > 0)) {
+      document.getElementById('r-verdict').textContent =
+        '"These numbers are already dead. Give me a balance, an APR and a minimum, and I\'ll open the file."';
+      document.getElementById('r-months').textContent = '—';
+      document.getElementById('r-years').textContent = '—';
+      document.getElementById('r-total').textContent = '—';
+      document.getElementById('r-interest').textContent = '—';
+      results.classList.add('show');
+      return;
+    }
+
+    var monthlyRate = apr / 100 / 12;
+    var bal = balance, months = 0, totalPaid = 0, immortal = false;
+
+    while (bal > 0.005) {
+      var interest = bal * monthlyRate;
+      var payment = (mode === 'pct') ? bal * (mv / 100) : mv;
+      if (mode === 'pct' && payment < 25) payment = 25; /* the standard $25 minimum floor */
+      if (payment <= interest) { immortal = true; break; }
+      if (payment > bal + interest) payment = bal + interest;
+      bal = bal + interest - payment;
+      totalPaid += payment;
+      months++;
+      if (months > 3600) { immortal = true; break; } /* 300 years: call it */
+    }
+
+    if (immortal) {
+      document.getElementById('r-months').textContent = '∞';
+      document.getElementById('r-years').textContent = '∞';
+      document.getElementById('r-total').textContent = '∞';
+      document.getElementById('r-interest').textContent = '∞';
+      document.getElementById('r-verdict').textContent =
+        '"This one never dies. The minimum doesn\'t even cover the interest, so the balance grows ' +
+        'while you pay for the privilege. Cause of death: the minimum payment. The bank designed it that way. ' +
+        'Pay more than the interest — any amount more — or this file stays open forever."';
+    } else {
+      var totalInterest = totalPaid - balance;
+      var years = (months / 12);
+      document.getElementById('r-months').textContent = months.toLocaleString('en-US');
+      document.getElementById('r-years').textContent = years.toFixed(1);
+      document.getElementById('r-total').textContent = money(totalPaid);
+      document.getElementById('r-interest').textContent = money(totalInterest);
+      document.getElementById('r-verdict').textContent =
+        '"The bank wants ' + money(totalInterest) + ' for the funeral. ' + months.toLocaleString('en-US') +
+        ' months of minimums to bury a ' + money(balance) + ' balance — and ' + money(totalInterest) +
+        ' of it buys you nothing. Not one cent of it touches the coffin. Pay more than the minimum, ' +
+        'and we change the time of death."';
+    }
+    results.classList.add('show');
+    results.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+})();
+</script>
+</body>
+</html>
