@@ -1,0 +1,222 @@
+/* Debt Autopsy — hub styles. Forensic red system. No trackers, no external requests. */
+@font-face {
+  font-family: "Oswald";
+  src: url("assets/oswald-bold.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Special Elite";
+  src: url("assets/special-elite.ttf") format("truetype");
+  font-display: swap;
+}
+:root {
+  --bg: #0a0a0f;
+  --panel: #12121a;
+  --panel2: #17171f;
+  --red: #ff3b3b;
+  --bone: #e8e8e8;
+  --green: #50e68c;
+  --dim: #9a9aa5;
+  --line: #2a2a35;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(255,59,59,.08), transparent),
+    linear-gradient(rgba(255,255,255,.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.022) 1px, transparent 1px);
+  background-size: auto, 72px 72px, 72px 72px;
+  color: var(--bone);
+  font-family: Georgia, "Times New Roman", serif;
+  line-height: 1.55;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+a { color: var(--red); }
+.wrap { width: 100%; max-width: 1060px; margin: 0 auto; padding: 0 20px; }
+
+/* header */
+header.site {
+  border-bottom: 1px solid var(--line);
+  padding: 14px 0;
+  position: sticky; top: 0; z-index: 10;
+  background: rgba(10,10,15,.92);
+  backdrop-filter: blur(6px);
+}
+header.site .wrap { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.brand img { width: 44px; height: 44px; border-radius: 50%; }
+.brand .name {
+  font-family: "Oswald", sans-serif; font-weight: 700; letter-spacing: .06em;
+  color: var(--bone); font-size: 1.25rem; text-transform: uppercase;
+}
+.brand .name em { color: var(--red); font-style: normal; }
+nav.main { margin-left: auto; display: flex; gap: 4px; flex-wrap: wrap; }
+nav.main a {
+  font-family: "Special Elite", monospace; font-size: .82rem; letter-spacing: .04em;
+  color: var(--dim); text-decoration: none; padding: 8px 10px; border-radius: 6px;
+  text-transform: uppercase;
+}
+nav.main a:hover, nav.main a:focus { color: var(--bone); background: var(--panel); }
+nav.main a[aria-current="page"] { color: var(--red); }
+
+/* hero */
+.hero { text-align: center; padding: 54px 0 10px; }
+.hero img.mort {
+  width: min(280px, 62vw); height: auto; border-radius: 50%;
+  box-shadow: 0 0 0 6px rgba(255,59,59,.18), 0 24px 60px rgba(0,0,0,.6);
+}
+.stamp {
+  display: inline-block; font-family: "Special Elite", monospace; color: var(--red);
+  border: 2px solid var(--red); padding: 4px 14px; border-radius: 4px;
+  transform: rotate(-2.5deg); letter-spacing: .14em; font-size: .85rem;
+  text-transform: uppercase; margin: 22px 0 6px;
+}
+h1.title {
+  font-family: "Oswald", sans-serif; font-weight: 700; text-transform: uppercase;
+  font-size: clamp(2.6rem, 9vw, 5.2rem); line-height: 1.02; letter-spacing: .02em;
+  margin: 10px 0 4px;
+}
+h1.title .red { color: var(--red); }
+.tagline {
+  font-family: "Special Elite", monospace; color: var(--bone);
+  font-size: clamp(1rem, 3.4vw, 1.3rem); margin-top: 12px;
+}
+.tagline .dim { color: var(--dim); }
+h2.section {
+  font-family: "Oswald", sans-serif; text-transform: uppercase; letter-spacing: .05em;
+  font-size: clamp(1.4rem, 4.5vw, 2rem); margin: 44px 0 14px;
+}
+h2.section .red { color: var(--red); }
+p.lede { max-width: 640px; margin: 14px auto 0; color: var(--dim); font-size: 1.05rem; }
+p.body { max-width: 680px; color: var(--dim); margin-bottom: 14px; }
+p.body strong, .lede strong { color: var(--bone); }
+main { flex: 1; padding-bottom: 60px; }
+
+/* kill counter */
+.counter {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px; margin: 34px 0 8px;
+}
+.stat {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+  padding: 18px 14px; text-align: center;
+}
+.stat .num {
+  font-family: "Oswald", sans-serif; font-weight: 700;
+  font-size: clamp(1.7rem, 5.5vw, 2.4rem); line-height: 1.1; color: var(--bone);
+}
+.stat .num.red { color: var(--red); }
+.stat .num.green { color: var(--green); }
+.stat .lbl {
+  font-family: "Special Elite", monospace; font-size: .72rem; letter-spacing: .1em;
+  color: var(--dim); text-transform: uppercase; margin-top: 6px;
+}
+.progress-shell {
+  margin: 22px 0 6px; background: var(--panel); border: 1px solid var(--line);
+  border-radius: 10px; padding: 16px;
+}
+.progress-head {
+  display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+  font-family: "Special Elite", monospace; font-size: .85rem; color: var(--dim);
+  text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px;
+}
+.progress-head b { color: var(--bone); font-weight: normal; }
+.bar { height: 22px; background: #1d1d26; border-radius: 6px; overflow: hidden; }
+.bar > div {
+  height: 100%; width: 3%;
+  background: linear-gradient(90deg, #b81f1f, var(--red));
+  border-radius: 6px 0 0 6px;
+}
+.progress-note { font-family: "Special Elite", monospace; color: var(--dim); font-size: .85rem; margin-top: 10px; }
+.progress-note .green { color: var(--green); }
+
+/* cards / nav tiles */
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 16px; }
+.tile {
+  display: block; background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+  padding: 20px; text-decoration: none;
+}
+.tile:hover, .tile:focus { border-color: var(--red); }
+.tile h3 { font-family: "Oswald", sans-serif; text-transform: uppercase; color: var(--bone); font-size: 1.1rem; letter-spacing: .04em; }
+.tile p { color: var(--dim); font-size: .95rem; margin-top: 6px; }
+.tile .go { font-family: "Special Elite", monospace; color: var(--red); font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; display: block; margin-top: 12px; }
+
+/* ledger table */
+table.ledger { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: .98rem; }
+table.ledger th, table.ledger td { text-align: left; padding: 14px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.ledger th {
+  font-family: "Special Elite", monospace; font-weight: normal; color: var(--dim);
+  text-transform: uppercase; letter-spacing: .08em; font-size: .75rem;
+}
+table.ledger td.case { font-family: "Special Elite", monospace; color: var(--bone); white-space: nowrap; }
+table.ledger td.amt { font-family: "Oswald", sans-serif; font-size: 1.15rem; white-space: nowrap; }
+table.ledger td.verdict { color: var(--dim); font-style: italic; }
+.pill {
+  display: inline-block; font-family: "Special Elite", monospace; font-size: .72rem;
+  letter-spacing: .1em; padding: 4px 10px; border-radius: 999px; text-transform: uppercase; white-space: nowrap;
+}
+.pill.closed { color: var(--green); border: 1.5px solid var(--green); }
+.pill.open { color: var(--red); border: 1.5px solid var(--red); transform: rotate(-1.5deg); }
+@media (max-width: 640px) {
+  table.ledger, table.ledger tbody, table.ledger tr, table.ledger td { display: block; width: 100%; }
+  table.ledger thead { display: none; }
+  table.ledger tr { border: 1px solid var(--line); border-radius: 10px; margin-bottom: 12px; background: var(--panel); padding: 6px 2px; }
+  table.ledger td { border-bottom: none; padding: 6px 14px; }
+}
+
+/* calculator */
+.calc {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+  padding: 24px; margin-top: 18px;
+}
+.calc label {
+  display: block; font-family: "Special Elite", monospace; font-size: .8rem;
+  text-transform: uppercase; letter-spacing: .08em; color: var(--dim); margin: 16px 0 6px;
+}
+.calc label:first-child { margin-top: 0; }
+.calc input[type="number"], .calc select {
+  width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: 8px;
+  color: var(--bone); font-family: "Oswald", sans-serif; font-size: 1.3rem; padding: 10px 12px;
+}
+.calc input:focus, .calc select:focus { outline: 2px solid var(--red); outline-offset: 1px; }
+.radio-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.radio-row label {
+  margin: 0; flex: 1; min-width: 140px; text-align: center; cursor: pointer;
+  border: 1px solid var(--line); border-radius: 8px; padding: 10px; color: var(--dim);
+}
+.radio-row input { accent-color: var(--red); margin-right: 6px; }
+.radio-row label:has(input:checked) { border-color: var(--red); color: var(--bone); }
+button.run, a.btn {
+  display: inline-block; margin-top: 22px; background: var(--red); color: #fff; border: none;
+  font-family: "Oswald", sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+  font-size: 1.05rem; padding: 13px 26px; border-radius: 8px; cursor: pointer; text-decoration: none;
+}
+button.run:hover, a.btn:hover { background: #e02e2e; }
+.results { display: none; margin-top: 26px; border-top: 1px dashed var(--line); padding-top: 20px; }
+.results.show { display: block; }
+.results .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.mort-verdict {
+  margin-top: 20px; font-family: "Special Elite", monospace; font-size: 1.05rem;
+  color: var(--bone); border-left: 4px solid var(--red); padding: 10px 14px; background: var(--panel2);
+}
+.mort-verdict .who { color: var(--red); text-transform: uppercase; letter-spacing: .08em; font-size: .78rem; display: block; margin-bottom: 4px; }
+.fineprint { color: var(--dim); font-size: .85rem; margin-top: 16px; max-width: 680px; }
+
+/* footer */
+footer.site {
+  border-top: 1px solid var(--line); padding: 26px 0 34px;
+  font-family: "Special Elite", monospace; color: var(--dim); font-size: .82rem;
+}
+footer.site .wrap { display: flex; gap: 14px; flex-wrap: wrap; justify-content: space-between; }
+footer.site a { color: var(--dim); }
+footer.site a:hover { color: var(--red); }
+.empty-note {
+  border: 1.5px dashed var(--line); border-radius: 10px; padding: 28px; text-align: center;
+  color: var(--dim); font-family: "Special Elite", monospace; margin-top: 16px;
+}
+.empty-note .big { color: var(--bone); font-size: 1.05rem; display: block; margin-bottom: 6px; }
