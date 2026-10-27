@@ -20,6 +20,7 @@
       <a href="cases.html">Case Files</a>
       <a href="calculator.html">Trap Calculator</a>
       <a href="evidence.html">Evidence Locker</a>
+      <a href="scam-forensics.html">Scam Forensics</a>
       <a href="mailbag.html">Mailbag</a>
     </nav>
   </div>
@@ -38,14 +39,14 @@
 
   <h2 class="section">The Kill <span class="red">Counter</span></h2>
   <section class="counter" aria-label="Kill counter">
-    <div class="stat"><div class="num">3</div><div class="lbl">Closed cases</div></div>
-    <div class="stat"><div class="num green">$29,000</div><div class="lbl">Killed in closed cases</div></div>
-    <div class="stat"><div class="num green">$900</div><div class="lbl">Case #001 — killed week 1</div></div>
-    <div class="stat"><div class="num red">$29,100</div><div class="lbl">Case #001 — still owed</div></div>
+    <div class="stat"><div class="num" data-canon="closedCases">3</div><div class="lbl">Closed cases</div></div>
+    <div class="stat"><div class="num green" data-canon-money="killedClosedCases">$29,000</div><div class="lbl">Killed in closed cases</div></div>
+    <div class="stat"><div class="num green" data-canon-money="killedWeek1">$900</div><div class="lbl">Case #001 — killed week 1</div></div>
+    <div class="stat"><div class="num red" data-canon-money="stillOwed">$29,100</div><div class="lbl">Case #001 — still owed</div></div>
   </section>
   <div class="progress-shell">
-    <div class="progress-head"><span>Case #001 — time of death pending</span><b>3% DEAD · 97% TO GO</b></div>
-    <div class="bar" role="img" aria-label="Progress bar: 3 percent of Case 001 paid off"><div></div></div>
+    <div class="progress-head"><span>Case #001 — time of death pending</span><b data-canon="percentLine">3% DEAD · 97% TO GO</b></div>
+    <div class="bar" role="img" aria-label="Progress bar: 3 percent of Case 001 paid off"><div data-canon-bar style="width:3%"></div></div>
     <p class="progress-note">The counter only moves when an episode publishes the numbers. <span class="green">Receipts, or it didn't happen.</span></p>
   </div>
 
@@ -66,12 +67,31 @@
       <p>Credit and debt findings, bagged and tagged from the autopsy table.</p>
       <span class="go">Check the locker →</span>
     </a>
+    <a class="tile" href="scam-forensics.html">
+      <h3>Scam Forensics</h3>
+      <p>The Toxicology lab: scams, junk fees and fine print — dissected. Mort only autopsies the already-charged.</p>
+      <span class="go">Enter the lab →</span>
+    </a>
     <a class="tile" href="mailbag.html">
       <h3>Mort's Mailbag</h3>
       <p>Got a balance that won't die? Submit a case for autopsy — anonymously.</p>
       <span class="go">Submit a case →</span>
     </a>
   </div>
+
+  <h2 class="section">Free Evidence — <span class="red">Take It Home</span></h2>
+  <section class="worksheet">
+    <div>
+      <h3>The Statement Autopsy</h3>
+      <p>Your statement is hiding what your debt really costs. Print this worksheet,
+      fill in your own numbers — balance, APR, minimum, closing date — and run the autopsy
+      Mort runs: what a day of your debt costs, what your minimum actually touches,
+      and the statement-date move that starves the interest.</p>
+      <p class="fineprint">A paper form. It asks for no account numbers and no personal
+      information — your numbers never leave your kitchen table.</p>
+    </div>
+    <a class="btn" href="files/statement-autopsy-worksheet.pdf" download>Download the free worksheet</a>
+  </section>
 </main>
 
 <footer class="site">
@@ -81,5 +101,34 @@
     <span><a href="mailbag.html">hellodebtautopsy@gmail.com</a></span>
   </div>
 </footer>
+<script>
+// Kill Report renders from canon.json — the single source of public figures.
+// The values in the markup above are the fallback if this file can't load.
+fetch("canon.json")
+  .then(function (r) { return r.ok ? r.json() : null; })
+  .then(function (c) {
+    if (!c) return;
+    var money = function (n) { return "$" + Number(n).toLocaleString("en-US"); };
+    document.querySelectorAll("[data-canon]").forEach(function (el) {
+      var key = el.getAttribute("data-canon");
+      if (key === "percentLine") {
+        el.textContent = c.percentDead + "% DEAD · " + c.percentToGo + "% TO GO";
+      } else if (c[key] !== undefined) {
+        el.textContent = c[key];
+      }
+    });
+    document.querySelectorAll("[data-canon-money]").forEach(function (el) {
+      var key = el.getAttribute("data-canon-money");
+      if (c[key] !== undefined) el.textContent = money(c[key]);
+    });
+    document.querySelectorAll("[data-canon-bar]").forEach(function (el) {
+      el.style.width = c.percentDead + "%";
+      var bar = el.closest(".bar");
+      if (bar) bar.setAttribute("aria-label",
+        "Progress bar: " + c.percentDead + " percent of Case 001 paid off");
+    });
+  })
+  .catch(function () { /* fallback values already in the markup */ });
+</script>
 </body>
 </html>
